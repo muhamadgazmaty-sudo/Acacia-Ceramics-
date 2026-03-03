@@ -2,67 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'services/auth_service.dart';
+import 'services/app_config_provider.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-    
-      // Initialize Firebase
-        await Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform,
-              );
-                
-                  runApp(const MyApp());
-                  }
+  
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
+  runApp(const MyApp());
+}
 
-                  class MyApp extends StatelessWidget {
-                    const MyApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-                      @override
-                        Widget build(BuildContext context) {
-                            return MaterialApp(
-                                  title: 'Acacia Ceramics',
-                                        debugShowCheckedModeBanner: false,
-                                              theme: ThemeData(
-                                                      primaryColor: const Color(0xFF36454F),
-                                                              scaffoldBackgroundColor: Colors.white,
-                                                                    ),
-                                                                          home: Scaffold(
-                                                                                  body: Container(
-                                                                                            decoration: const BoxDecoration(
-                                                                                                        gradient: LinearGradient(
-                                                                                                                      begin: Alignment.topLeft,
-                                                                                                                                    end: Alignment.bottomRight,
-                                                                                                                                                  colors: [
-                                                                                                                                                                  Color(0xFF36454F),
-                                                                                                                                                                                  Color(0xFFD4AF37),
-                                                                                                                                                                                                ],
-                                                                                                                                                                                                            ),
-                                                                                                                                                                                                                      ),
-                                                                                                                                                                                                                                child: const Center(
-                                                                                                                                                                                                                                            child: Column(
-                                                                                                                                                                                                                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                                                                                                                                                                                                                                        children: [
-                                                                                                                                                                                                                                                                                        Text(
-                                                                                                                                                                                                                                                                                                          '🏛️ Acacia Ceramics',
-                                                                                                                                                                                                                                                                                                                            style: TextStyle(
-                                                                                                                                                                                                                                                                                                                                                fontSize: 32,
-                                                                                                                                                                                                                                                                                                                                                                    fontWeight: FontWeight.bold,
-                                                                                                                                                                                                                                                                                                                                                                                        color: Colors.white,
-                                                                                                                                                                                                                                                                                                                                                                                                          ),
-                                                                                                                                                                                                                                                                                                                                                                                                                          ),
-                                                                                                                                                                                                                                                                                                                                                                                                                                          SizedBox(height: 20),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                          Text(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'Developed by Mohammad Jazmati',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              style: TextStyle(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  fontSize: 16,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      color: Colors.white70,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ],
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              );
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppConfigProvider()),
+        ChangeNotifierProvider(create: (_) => AuthService()),
+      ],
+      child: MaterialApp(
+        title: 'Acacia Ceramics',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: const Color(0xFF36454F),
+          scaffoldBackgroundColor: Colors.white,
+          fontFamily: 'Tajawal',
+        ),
+        home: const SplashScreen(),
+      ),
+    );
+  }
+}
