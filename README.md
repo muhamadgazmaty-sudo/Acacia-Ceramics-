@@ -1,2 +1,0 @@
-# Acacia-Ceramics-
-Acacia Ceramics 
