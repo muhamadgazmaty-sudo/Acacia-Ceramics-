@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // دالة التحقق من الأدمن
+    function isAdmin() {
+      return request.auth != null && 
+        (request.auth.token.email == 'admin' || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // دالة التحقق من المستخدم المصادق
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // المنتجات: الجميع يقرأ، الأدمن فقط يكتب
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // الأقسام: الجميع يقرأ، الأدمن فقط يكتب
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // البانرات: الجميع يقرأ، الأدمن فقط يكتب
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // إعدادات التطبيق: الجميع يقرأ، الأدمن فقط يكتب
+    match /app_config/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // المستخدمين: كل مستخدم يقرأ ويعدل بياناته فقط
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // المفضلة: المستخدم يدير مفضلته فقط
+    match /favorites/{favoriteId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+    
+    // أكواد الخصم: الجميع يقرأ، الأدمن يكتب
+    match /discount_codes/{codeId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // الإشعارات
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+  }
+}
